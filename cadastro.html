@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro – Dashboard Power BI High Color</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #2c3e50;
+      font-size: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #2980b9;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    p {
+      font-size: 14px;
+      color: #e74c3c;
+    }
+
+    .logo {
+      width: 180px;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo_highcolor.jpg" alt="Logo High Color" class="logo">
+    <h2>Cadastro – Dashboard Power BI High Color</h2>
+
+    <input type="email" id="email_cadastro" placeholder="Seu e-mail" />
+    <input type="password" id="senha_cadastro" placeholder="Digite a senha" />
+    <input type="password" id="senha_confirmacao" placeholder="Confirme a senha" />
+    <button onclick="cadastrar()">Cadastrar</button>
+    <p id="mensagem_cadastro"></p>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://ykxoqfgotajdbhhidixo.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkcG9xZm90YWpkYmhoaWRpeG8iLCJpYXQiOjE3MTI3Mzk5MDYsImV4cCI6MTc0NDI3NTkwNn0.z2skOBv7X1yCrXrhm5F_KSsjgAOUuW-DMlA5VIKMe4Y'
+    );
+
+    const dominiosPermitidos = ['@projetarind.com', '@highcolorpinturas.com.br'];
+
+    function validarDominio(email) {
+      return dominiosPermitidos.some(dominio => email.endsWith(dominio));
+    }
+
+    async function cadastrar() {
+      const email = document.getElementById("email_cadastro").value.trim();
+      const senha = document.getElementById("senha_cadastro").value;
+      const confirmacao = document.getElementById("senha_confirmacao").value;
+      const msg = document.getElementById("mensagem_cadastro");
+
+      if (!validarDominio(email)) {
+        msg.textContent = "E-mail não autorizado.";
+        return;
+      }
+
+      if (senha !== confirmacao) {
+        msg.textContent = "As senhas não coincidem.";
+        return;
+      }
+
+      const { error } = await supabase
+        .from("acessos_powerbi")
+        .insert([{ senha: senha, ativo: true }]);
+
+      if (error) {
+        msg.textContent = "Erro ao cadastrar.";
+      } else {
+        msg.style.color = "green";
+        msg.textContent = "Cadastro realizado com sucesso!";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1500);
+      }
+    }
+  </script>
+</body>
+</html>

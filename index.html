@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Área Restrita – Dashboard Power BI High Color</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #2c3e50;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #2980b9;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    p {
+      font-size: 14px;
+      color: #e74c3c;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #555;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .link {
+      background: transparent;
+      color: #2980b9;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 15px;
+      text-align: center;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo_highcolor.jpg" alt="Logo High Color" style="width: 180px; display: block; margin: 0 auto 20px auto;">
+    <h2 style="font-size: 18px;">Área Restrita – Dashboard Power BI High Color</h2>
+    <input type="email" id="email_login" placeholder="Seu e-mail" />
+    <input type="password" id="senha_login" placeholder="Senha" />
+    <button onclick="logar()">Entrar</button>
+    <p id="mensagem_login"></p>
+    <p class="small">Em caso de perda de senha, acione o administrador.</p>
+    <button class="link" onclick="window.location.href='cadastro.html'">Cadastrar novo usuário</button>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://ykxoqfgotajdbhhidixo.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkcG9xZm90YWpkYmhoaWRpeG8iLCJpYXQiOjE3MTI3Mzk5MDYsImV4cCI6MTc0NDI3NTkwNn0.z2skOBv7X1yCrXrhm5F_KSsjgAOUuW-DMlA5VIKMe4Y'
+    );
+
+    const dominiosPermitidos = ['@projetarind.com', '@highcolorpinturas.com.br'];
+
+    function validarDominio(email) {
+      return dominiosPermitidos.some(dominio => email.endsWith(dominio));
+    }
+
+    async function logar() {
+      const email = document.getElementById("email_login").value.trim();
+      const senha = document.getElementById("senha_login").value;
+      const msg = document.getElementById("mensagem_login");
+
+      if (!validarDominio(email)) {
+        msg.textContent = "E-mail não autorizado.";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('acessos_powerbi')
+        .select('*')
+        .eq('senha', senha)
+        .eq('ativo', true)
+        .maybeSingle();
+
+      if (data) {
+        window.location.href = 'https://app.powerbi.com/view?r=eyJrIjoiZDA3NWUwZDgtYTViMS00NjQ3LWE5MTUtYTg0NjRkN2Q2MzcyIiwidCI6ImE2ZmMwMTM0LWIxNDgtNDA4YS05MWJlLWM2NTcyOTNmNDEyYSJ9';
+      } else {
+        msg.textContent = "Senha incorreta.";
+      }
+    }
+  </script>
+</body>
+</html>
