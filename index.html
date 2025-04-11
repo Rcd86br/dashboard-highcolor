@@ -119,11 +119,17 @@
         .eq('ativo', true)
         .maybeSingle();
 
-      if (data) {
-        window.location.href = 'https://app.powerbi.com/view?r=eyJrIjoiZDA3NWUwZDgtYTViMS00NjQ3LWE5MTUtYTg0NjRkN2Q2MzcyIiwidCI6ImE2ZmMwMTM0LWIxNDgtNDA4YS05MWJlLWM2NTcyOTNmNDEyYSJ9';
-      } else {
-        msg.textContent = "Senha incorreta.";
+      if (error) {
+        msg.textContent = "Erro na verificação. Tente novamente.";
+        return;
       }
+
+      if (!data) {
+        msg.textContent = "Usuário não encontrado ou senha inválida.";
+        return;
+      }
+
+      window.location.href = 'https://app.powerbi.com/view?r=eyJrIjoiZDA3NWUwZDgtYTViMS00NjQ3LWE5MTUtYTg0NjRkN2Q2MzcyIiwidCI6ImE2ZmMwMTM0LWIxNDgtNDA4YS05MWJlLWM2NTcyOTNmNDEyYSJ9';
     }
   </script>
 </body>
