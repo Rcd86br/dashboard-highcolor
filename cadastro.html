@@ -1,34 +1,23 @@
-async function logar() {
-  const email = document.getElementById("email_login").value.trim();
-  const senha = document.getElementById("senha_login").value;
-  const msg = document.getElementById("mensagem_login");
+msg.textContent = "";
+msg.style.color = "#e74c3c";
 
-  msg.textContent = ""; // Limpa mensagem anterior
+if (!validarDominio(email)) {
+  msg.textContent = "E-mail não autorizado.";
+  return;
+}
 
-  if (!validarDominio(email)) {
-    msg.textContent = "E-mail não autorizado.";
-    msg.style.color = "#e74c3c";
-    return;
-  }
+if (senha !== confirmacao) {
+  msg.textContent = "As senhas não coincidem.";
+  return;
+}
 
-  const { data, error } = await supabase
-    .from('acessos_powerbi')
-    .select('*')
-    .eq('senha', senha)
-    .eq('ativo', true)
-    .maybeSingle();
+const { error } = await supabase
+  .from("acessos_powerbi")
+  .insert([{ senha: senha, ativo: true }]);
 
-  if (error) {
-    msg.textContent = "Erro na verificação. Tente novamente.";
-    msg.style.color = "#e74c3c";
-    return;
-  }
-
-  if (!data) {
-    msg.textContent = "Usuário não encontrado ou senha inválida.";
-    msg.style.color = "#e74c3c";
-    return;
-  }
-
-  window.location.href = 'https://app.powerbi.com/view?r=...';
+if (error) {
+  msg.textContent = "Erro ao cadastrar.";
+} else {
+  msg.style.color = "green";
+  msg.textContent = "Cadastro realizado com sucesso!";
 }
